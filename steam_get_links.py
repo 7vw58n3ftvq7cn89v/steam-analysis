@@ -28,7 +28,7 @@ headers = {
 #替换你自己的headers
 n = 5
 #n代表爬取到多少页
-path = 'steam/test.csv'
+path = 'test.csv'
 #修改你的保存位置
 
 def getgamelist(n):

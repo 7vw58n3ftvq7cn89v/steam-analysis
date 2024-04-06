@@ -1,12 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-import json
+import os
 import pandas as pd
 
 
-game_links_path = 'steam/test.csv'
-game_info_path = 'steam/game_info.csv'
+game_links_path = 'test.csv'
+game_info_path = 'game_info.csv'
 
 
 proxies = { "http": None, "https": None}
@@ -251,7 +251,11 @@ if __name__ == "__main__":
             # 标记已挖掘
             game_links.at[index, 'digged'] = True 
             
-    
-    game_info.to_csv(game_info_path,mode='a', index=False)
+    # 写入数据
+    if not os.path.exists(game_info_path):
+        game_info.to_csv(game_info_path, index=False)
+    else:
+        game_info.to_csv(game_info_path, mode='a', header=False, index=False)   
+
     game_links.to_csv(game_links_path, index=False)
     print('已完成全部')
