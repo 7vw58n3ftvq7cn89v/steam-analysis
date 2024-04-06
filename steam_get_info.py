@@ -150,7 +150,7 @@ def getdetail(Link, ID):
             'Overall_Count':'',
             'Overall_Percentage':'',
 
-            'review': ''
+            # 'review': ''
         }
     
     global count
@@ -249,10 +249,12 @@ if __name__ == "__main__":
         if getError == False :
             new_row_df = pd.DataFrame([new_row_dict])
             # 直接写入.csv
-            # new_row_df.to_csv(game_info_path, mode='a', header=False, index=False)
             game_info = pd.concat([game_info,new_row_df], ignore_index=True)
+            new_row_df.to_csv(game_info_path, mode='a', header=False, index=False)
             # 标记已挖掘
             game_links.at[index, 'digged'] = True
+            # 写入标记
+            game_links.to_csv(game_links_path, index=False)
             error_count = 0
         else :
             error_count += 1
