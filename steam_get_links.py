@@ -25,11 +25,11 @@ headers = {
 }
 
 
-#替换你自己的headers
-n = 5
 #n代表爬取到多少页
+n = 100
 path = 'test.csv'
 #修改你的保存位置
+path = 'test.csv'
 
 def getgamelist(n):
     linklist=[]

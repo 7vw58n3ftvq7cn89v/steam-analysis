@@ -177,7 +177,7 @@ def getdetail(Link, ID):
         date = getdate(soup)
         # rate = userreviewsrate(soup)
         dev = developer(soup)
-        review = getreviews(str(ID))
+        # review = getreviews(str(ID))
         price = gameprice(soup)
         recent_evaluation, recent_count, recent_positive_percentage, overall_evaluation, overall_count, overall_positive_percentage = review_all(soup)
 
@@ -198,7 +198,7 @@ def getdetail(Link, ID):
             'Overall_Count': overall_count,
             'Overall_Percentage': overall_positive_percentage,
 
-            'review':review
+            # 'review':review
         }
 
         print('已完成: '+name+str(ID)+'第%d个'%count)
@@ -236,6 +236,7 @@ if __name__ == "__main__":
 ]
     game_info = pd.DataFrame(columns=column_names)
 
+    error_count = 0
     for index,row in game_links.iterrows():
         link = row['Link']
         ID = row['ID']
@@ -247,9 +248,17 @@ if __name__ == "__main__":
         # 将新的行插入df的末尾
         if getError == False :
             new_row_df = pd.DataFrame([new_row_dict])
+            # 直接写入.csv
+            # new_row_df.to_csv(game_info_path, mode='a', header=False, index=False)
             game_info = pd.concat([game_info,new_row_df], ignore_index=True)
             # 标记已挖掘
-            game_links.at[index, 'digged'] = True 
+            game_links.at[index, 'digged'] = True
+            error_count = 0
+        else :
+            error_count += 1
+            if error_count >= 5 :
+                print('已连续错误多次，退出程序')
+                break 
             
     # 写入数据
     if not os.path.exists(game_info_path):
@@ -258,4 +267,4 @@ if __name__ == "__main__":
         game_info.to_csv(game_info_path, mode='a', header=False, index=False)   
 
     game_links.to_csv(game_links_path, index=False)
-    print('已完成全部')
+    print('已保存数据')
