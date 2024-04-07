@@ -235,6 +235,8 @@ if __name__ == "__main__":
     'review'
 ]
     game_info = pd.DataFrame(columns=column_names)
+    if not os.path.exists(game_info_path):
+        game_info.to_csv(game_info_path, index=False)
 
     error_count = 0
     for index,row in game_links.iterrows():
@@ -263,10 +265,10 @@ if __name__ == "__main__":
                 break 
             
     # 写入数据
-    if not os.path.exists(game_info_path):
-        game_info.to_csv(game_info_path, index=False)
-    else:
-        game_info.to_csv(game_info_path, mode='a', header=False, index=False)   
+    # if not os.path.exists(game_info_path):
+    #     game_info.to_csv(game_info_path, index=False)
+    # else:
+    #     game_info.to_csv(game_info_path, mode='a', header=False, index=False)   
 
-    game_links.to_csv(game_links_path, index=False)
-    print('已保存数据')
+    # game_links.to_csv(game_links_path, index=False)
+    # print('已保存数据')
