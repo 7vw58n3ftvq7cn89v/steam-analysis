@@ -1,7 +1,8 @@
 import unittest
-from steam_get_info import review_all, gameprice, clean_price
+from steam_get_info import review_all, gameprice, clean_price, get_peak, getreviews, getdate, developer, gamename, taglist, description, getdetail
 from bs4 import BeautifulSoup
-
+import requests
+from unittest.mock import patch
 
 class TestReviewAll(unittest.TestCase):
 
@@ -81,6 +82,49 @@ class TestGamePrice(unittest.TestCase):
         self.assertEqual(clean_price('免费开玩'), 0.0)
         self.assertEqual(clean_price('错误价格'), 0.0)
         self.assertEqual(clean_price(None), 0.0)
+
+    @patch('steam_get_info.requests.get')
+    def test_get_peak_success(self, mock_get):
+        # 模拟返回成功的响应
+        mock_get.return_value.text ='''
+        <div id="app-heading" class="content">
+            <img class="app-image" src="/assets/steam-images/730.jpg" alt="Counter-Strike 2" width="184" height="69">
+            <div class="app-stat"> 
+                <span class="num">728,926</span>
+                <br>playing <abbr class="timeago" title="2024-04-09T08:00:42Z">an hour ago</abbr>
+            </div>
+            <div class="app-stat"> 
+                <span class="num">1,502,218</span>
+                <br>24-hour peak
+            </div>
+            <div class="app-stat"> 
+                <span class="num">1,802,853</span>
+                <br>all-time peak
+            </div>
+        </div>
+        '''
+        # 调用函数
+        peak = get_peak(12345)
+        # 断言结果是否正确
+        self.assertEqual(peak, 1802853)
+
+    @patch('steam_get_info.requests.get')
+    def test_get_peak_failure(self, mock_get):
+        # 模拟返回失败的响应
+        mock_get.side_effect = requests.exceptions.RequestException()
+        # 调用函数
+        peak = get_peak(12345)
+        # 断言结果是否为0
+        self.assertEqual(peak, 0)
+
+    @patch('steam_get_info.requests.get')
+    def test_get_peak_invalid_id(self, mock_get):
+        # 模拟一个无效的ID情况
+        mock_get.return_value.text = "Page not found"
+        # 调用函数
+        peak = get_peak('invalid_id')
+        # 断言结果是否为0
+        self.assertEqual(peak, 0)
 
 if __name__ == '__main__':
     unittest.main()

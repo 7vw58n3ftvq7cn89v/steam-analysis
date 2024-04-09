@@ -22,6 +22,7 @@ headers = {
     'sec-fetch-dest': 'document',
     'sec-fetch-mode': 'navigate',
     'sec-fetch-site': 'same-origin',
+    'Cookie': 'birthtime=1070208001',
     'sec-fetch-user': '?1',
     'upgrade-insecure-requests': '1',
     'user-agent': 'mozilla/5.0 (windows nt 10.0; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/119.0.0.0 safari/537.36 edg/119.0.0.0',
@@ -130,8 +131,25 @@ def getreviews(ID):#获取评论
     k=str('\n'.join(list1))
     return k
 
+def get_peak(ID):
+    link = 'https://steamcharts.com/app/'+str(ID)
+
+    try:
+        r = requests.get(link, proxies=proxies, headers=headers, timeout=10)
+        soup = BeautifulSoup(r.text, 'lxml')
+        soup = soup.find('div', id='app-heading')
+        peak_span = soup.find_all('span', class_='num')
+        all_time_peak_num = peak_span[2].text
+        all_time_peak_num = int(all_time_peak_num.replace(',', ''))
+
+        return all_time_peak_num 
+    except:
+        print('获取peak信息失败')
+        return 0
+
+
 def getdetail(Link, ID):
-    tag, des,  date, dev, review,name,price = ' ', ' ', ' ', ' ', ' ',' ',' '
+    tag, des,  date, dev, review,name,price,peak = ' ', ' ', ' ', ' ', ' ',' ',' ',' '
     recent_evaluation, recent_count, recent_positive_percentage, overall_evaluation, overall_count, overall_positive_percentage = ' ',' ',' ',' ',' ',' '
     new_row_dict = {
             'Link':'',
@@ -149,18 +167,19 @@ def getdetail(Link, ID):
             'Overall_Description':'',
             'Overall_Count':'',
             'Overall_Percentage':'',
+            'peak': '',
 
             # 'review': ''
         }
     
     global count
     try:
-        r = requests.get(Link, proxies=proxies,headers=headers,timeout=5)
+        r = requests.get(Link, proxies=proxies,headers=headers,timeout=2)
         print('响应成功')
     except:
         print('服务器无响应1')
         try:
-            r = requests.get(Link, proxies=proxies, headers=headers,timeout=5)
+            r = requests.get(Link, proxies=proxies, headers=headers,timeout=3)
         except:
             print('服务器无响应2')
             try:
@@ -180,6 +199,7 @@ def getdetail(Link, ID):
         # review = getreviews(str(ID))
         price = gameprice(soup)
         recent_evaluation, recent_count, recent_positive_percentage, overall_evaluation, overall_count, overall_positive_percentage = review_all(soup)
+        peak = get_peak(ID)
 
         new_row_dict = {
             'Link': Link,
@@ -197,6 +217,7 @@ def getdetail(Link, ID):
             'Overall_Description': overall_evaluation,
             'Overall_Count': overall_count,
             'Overall_Percentage': overall_positive_percentage,
+            'peak': peak,
 
             # 'review':review
         }
@@ -232,7 +253,8 @@ if __name__ == "__main__":
     'Overall_Description',
     'Overall_Count',
     'Overall_Percentage',
-    'review'
+    'review',
+    'peak'
 ]
     game_info = pd.DataFrame(columns=column_names)
     if not os.path.exists(game_info_path):
