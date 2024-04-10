@@ -18,7 +18,7 @@ headers = {
     'cache-control': 'max-age=0',
     'connection': 'keep-alive',
     'host': 'store.steampowered.com',
-    'referer': 'https://store.steampowered.com/login/?redir=search%2F%3Fterm%3D&redir_ssl=1&snr=1_7_7_230_global-header',
+    'referer': 'https://store.steampowered.com/',
     'sec-fetch-dest': 'document',
     'sec-fetch-mode': 'navigate',
     'sec-fetch-site': 'same-origin',
@@ -134,8 +134,26 @@ def getreviews(ID):#获取评论
 def get_peak(ID):
     link = 'https://steamcharts.com/app/'+str(ID)
 
+    headers_steamcharts = {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+        'Cache-Control': 'max-age=0',
+        'Cookie': 'dnsDisplayed=undefined; ccpaApplies=false; signedLspa=undefined; _sp_su=false; idw-fe-id=2b382a1e-4113-4039-96e8-5ba7bd0a4c27; ccpaUUID=77fbbc90-83d2-48c5-9397-e7a0d61efa67; _pbjs_userid_consent_data=6683316680106290; _sharedid=4c1bfa4e-a0e4-4c98-8042-e913281b2134; _gid=GA1.2.2065889914.1712652779; _ga=GA1.2.573694605.1712559411; _ga_QE2L64H640=GS1.2.1712737796.3.1.1712737983.0.0.0; _ga_0CPE0JFSCT=GS1.1.1712737795.3.1.1712737987.0.0.0',
+        'If-Modified-Since': 'Wed, 10 Apr 2024 08:39:30 GMT',
+        'Sec-Ch-Ua': '"Microsoft Edge";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0',
+    }
+
     try:
-        r = requests.get(link, proxies=proxies, headers=headers, timeout=10)
+        r = requests.get(link, proxies=proxies, headers=headers_steamcharts, timeout=2)
         soup = BeautifulSoup(r.text, 'lxml')
         soup = soup.find('div', id='app-heading')
         peak_span = soup.find_all('span', class_='num')
@@ -146,7 +164,6 @@ def get_peak(ID):
     except:
         print('获取peak信息失败')
         return 0
-
 
 def getdetail(Link, ID):
     tag, des,  date, dev, review,name,price,peak = ' ', ' ', ' ', ' ', ' ',' ',' ',' '
@@ -172,7 +189,6 @@ def getdetail(Link, ID):
             # 'review': ''
         }
     
-    global count
     try:
         r = requests.get(Link, proxies=proxies,headers=headers,timeout=2)
         print('响应成功')
@@ -222,11 +238,11 @@ def getdetail(Link, ID):
             # 'review':review
         }
 
-        print('已完成: '+name+str(ID)+'第%d个'%count)
+        print('已完成: '+name+str(ID))
         getError = False
 
     except:
-        print('未完成:  '+str(ID)+'第%d个'%count)
+        print('未完成:  '+str(ID))
         price = 'error'
         getError = True
 
@@ -269,6 +285,8 @@ if __name__ == "__main__":
             continue
 
         new_row_dict, getError = getdetail(link, ID)
+        print("第%d个"%count)
+        count += 1
         # 将新的行插入df的末尾
         if getError == False :
             new_row_df = pd.DataFrame([new_row_dict])
