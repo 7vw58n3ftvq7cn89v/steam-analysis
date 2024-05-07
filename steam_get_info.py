@@ -136,7 +136,7 @@ def get_peak(ID):
 
     headers_steamcharts = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
         'Cache-Control': 'max-age=0',
         'Cookie': 'dnsDisplayed=undefined; ccpaApplies=false; signedLspa=undefined; _sp_su=false; idw-fe-id=2b382a1e-4113-4039-96e8-5ba7bd0a4c27; ccpaUUID=77fbbc90-83d2-48c5-9397-e7a0d61efa67; _pbjs_userid_consent_data=6683316680106290; _sharedid=4c1bfa4e-a0e4-4c98-8042-e913281b2134; _gid=GA1.2.2065889914.1712652779; _ga=GA1.2.573694605.1712559411; _ga_QE2L64H640=GS1.2.1712737796.3.1.1712737983.0.0.0; _ga_0CPE0JFSCT=GS1.1.1712737795.3.1.1712737987.0.0.0',
@@ -246,7 +246,6 @@ def getdetail(Link, ID):
         price = 'error'
         getError = True
 
-    count += 1
     return new_row_dict, getError
 
 

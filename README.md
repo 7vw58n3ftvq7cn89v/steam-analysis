@@ -6,4 +6,4 @@
 
 
 ## tasks
-- [ ] 爬取峰值在线人数 ：https://steamcharts.com/
+- [x] 爬取峰值在线人数 ：https://steamcharts.com/
